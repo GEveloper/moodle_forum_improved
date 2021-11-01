@@ -227,9 +227,26 @@ class mod_forum_post_form extends moodleform {
                 $canselectgroup = empty($post->parent) && ($canselectgroupfornew || $canselectgroupformove);
 
                 if ($canselectgroup) {
-                    $mform->addElement('select', 'groupinfo', get_string('group'), $groupinfo);
-                    $mform->setDefault('groupinfo', $post->groupid);
-                    $mform->setType('groupinfo', PARAM_INT);
+                    if ($post->edit) {
+                        $mform->addElement('select', 'groupinfo', get_string('group'), $groupinfo);
+                        $mform->setDefault('groupinfo', $post->groupid);
+                        $mform->setType('groupinfo', PARAM_INT);
+                    }
+                    else {
+                        $mform->addElement('header', 'groupselector', get_string('groups'));
+                        $mform->addElement('html', '<style>.groupselector-list .form-group { margin-bottom: 0; }</style>');
+                        $mform->addElement('html', '<div class="groupselector-list">');
+                        $this->add_checkbox_controller(1, null, null, 0);
+                        foreach ($groupinfo as $group_item_id => $group_item_name) {
+                            if ($group_item_id == -1) {
+                                continue;
+                            }
+                            $groupselectorid = 'groupselector-' . $group_item_id;
+                            $mform->addElement('advcheckbox', $groupselectorid, $group_item_name, null, array('group' => 1));
+                            $mform->disabledIf($groupselectorid, 'posttomygroups', 'checked');
+                        }
+                        $mform->addElement('html', '</div>');
+                    }
                 } else {
                     if (empty($post->groupid)) {
                         $groupname = get_string('allparticipants');
