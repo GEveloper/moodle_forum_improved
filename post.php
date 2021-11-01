@@ -971,17 +971,28 @@ if ($mformpost->is_cancelled()) {
                     $groupstopostto[] = $groupid;
                 }
             }
-        } else if (isset($fromform->groupinfo)) {
-            // Use the value provided in the dropdown group selection.
-            $groupstopostto[] = $fromform->groupinfo;
-            $redirectto->param('group', $fromform->groupinfo);
+        // } else if (isset($fromform->groupinfo)) {
+        //     // Use the value provided in the dropdown group selection.
+        //     $groupstopostto[] = $fromform->groupinfo;
+        //     $redirectto->param('group', $fromform->groupinfo);
         } else if (isset($fromform->groupid) && !empty($fromform->groupid)) {
             // Use the value provided in the hidden form element instead.
             $groupstopostto[] = $fromform->groupid;
             $redirectto->param('group', $fromform->groupid);
         } else {
-            // Use the value for all participants instead.
-            $groupstopostto[] = -1;
+            foreach ($fromform as $key => $value) {
+                $startswith = 'groupselector-';
+                if (substr($key, 0, strlen($startswith)) === $startswith) {
+                    if ($value === '1') {
+                        $groupstopostto[] = (int) str_replace($startswith, '', $key);
+                    }
+                }
+            }
+
+            if (empty($groupstopostto)) {
+                // Use the value for all participants instead.
+                $groupstopostto[] = -1;
+            }
         }
 
         // Before we post this we must check that the user will not exceed the blocking threshold.
