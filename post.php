@@ -267,6 +267,7 @@ if (!empty($forum)) {
 
     // Load up the $post variable.
     $post = new stdClass();
+    $post->parent      = $course->parent->id;
     $post->course      = $course->id;
     $post->forum       = $forum->id;
     $post->discussion  = $parent->discussion;
