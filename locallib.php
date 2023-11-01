@@ -735,7 +735,7 @@ function forum_update_calendar($forum, $cmid) {
         $event->visible = instance_is_visible('forum', $forum);
     }
 
-    $event->id = $DB->get_field('event', 'id',
+    $event->id = (int) $DB->get_field('event', 'id',
             array('modulename' => 'forum', 'instance' => $forum->id, 'eventtype' => FORUM_EVENT_TYPE_DUE));
 
     if ($event->id) {
